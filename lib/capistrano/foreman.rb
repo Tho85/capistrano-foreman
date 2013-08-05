@@ -11,6 +11,7 @@ Capistrano::Configuration.instance(:must_exist).load do |configuration|
       cmd = foreman_use_binstubs ? 'bin/foreman' : foreman_cmd
       run "if [[ -d #{foreman_upstart_path} ]]; then mkdir -p #{foreman_upstart_path}; fi"
       run "cd #{current_path} && #{cmd} export upstart #{foreman_upstart_path} #{format(options)}"
+      try_sudo "initctl reload-configuration"
     end
 
     desc "Start the application services"
