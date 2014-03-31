@@ -11,6 +11,7 @@ Capistrano tasks for foreman and upstart.
 Add this to your `Capfile`:
 
 ```ruby
+set :foreman_roles, [:app]
 require 'capistrano/foreman'
 
 # Default settings

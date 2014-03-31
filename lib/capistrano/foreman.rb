@@ -4,10 +4,11 @@ Capistrano::Configuration.instance(:must_exist).load do |configuration|
   _cset :foreman_options, {}
   _cset :foreman_use_binstubs, false
   _cset :foreman_cmd, 'bundle exec foreman'
+  _cset :foreman_roles, [:app]
 
   namespace :foreman do
     desc "Export the Procfile to Ubuntu's upstart scripts"
-    task :export, roles: :app do
+    task :export, roles: foreman_roles do
       cmd = foreman_use_binstubs ? 'bin/foreman' : foreman_cmd
       run "if [[ -d #{foreman_upstart_path} ]]; then mkdir -p #{foreman_upstart_path}; fi"
       run "cd #{current_path} && #{cmd} export upstart #{foreman_upstart_path} #{format(options)}"
@@ -15,17 +16,17 @@ Capistrano::Configuration.instance(:must_exist).load do |configuration|
     end
 
     desc "Start the application services"
-    task :start, roles: :app do
+    task :start, roles: foreman_roles do
       try_sudo "initctl start #{options[:app]}"
     end
 
     desc "Stop the application services"
-    task :stop, roles: :app do
+    task :stop, roles: foreman_roles do
       try_sudo "initctl stop #{options[:app]} || echo 'Jobs not running for #{options[:app]}'"
     end
 
     desc "Restart the application services"
-    task :restart, roles: :app do
+    task :restart, roles: foreman_roles do
       stop
       start
     end
